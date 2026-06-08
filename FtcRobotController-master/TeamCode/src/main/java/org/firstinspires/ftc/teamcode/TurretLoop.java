@@ -25,17 +25,17 @@ public class TurretLoop extends LinearOpMode {
         rotator.setDirection(Servo.Direction.FORWARD);
         rotator.setPosition(0);
 
-        double distance = 0;
+        double distance = 5;
         double angle = 1;
-        double height = 1;
+        double height = 0;
 
-        double overlycomplexcoefficient = 60 / (2 * Math.PI * 1.4/*wheel radius*/);
+        double rps_to_rpm_coefficient = 60 / (2 * Math.PI * 1.4/*wheel radius*/);
 
         waitForStart();
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            double vel = overlycomplexcoefficient * Math.sqrt((9.8 * Math.pow(distance, 2)) / (2 * Math.pow(Math.cos(angle), 2) * ((distance * Math.tan(angle)) - height)));
+            double wheel_rpm = rps_to_rpm_coefficient * Math.sqrt((9.8 * Math.pow(distance, 2)) / (2 * Math.pow(Math.cos(angle), 2) * ((distance * Math.tan(angle)) - height)));
 
             //    motor.setPower(gamepad1.left_stick_y/1.5);
             //    rotator.setPosition((gamepad1.left_stick_x - 0.5) * 2);

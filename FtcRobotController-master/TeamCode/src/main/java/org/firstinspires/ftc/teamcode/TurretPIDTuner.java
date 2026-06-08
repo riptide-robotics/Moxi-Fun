@@ -20,10 +20,10 @@ import java.util.ArrayList;
 @TeleOp(name = "TurretPIDTuner")
 public class TurretPIDTuner extends LinearOpMode {
 
-    public static double kp = 0.00025, ki = 0.0075, kd = 0.00000155;
+    public static double kp = 0.0002, ki = 0.000003, kd = 0.00003556;
     public static int wantedrpm = 0;
-    public static double kf = 0.0002;
-    public static double queueSize = 5;
+    public static double kf = 0.000225;
+    public static double queueSize = 25;
     public double lKp = kp, lKi = ki, lKd = kd;
     public DcMotor motor;
     public double cooldown = -100;

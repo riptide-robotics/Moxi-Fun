@@ -1,5 +1,5 @@
 Repository to work on the ping pong ball turret for our Moxi exhibition.
-
+"
      ______
   \ ______  \
            \    \  _ /---\   
@@ -12,3 +12,4 @@ Repository to work on the ping pong ball turret for our Moxi exhibition.
  || ~~~~~~ ||       |o   o|
  ||  ~~~~  ||       |  O  |
 _________________________________________________
+"

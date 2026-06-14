@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,16 @@ public class TurretLoop extends LinearOpMode {
             //    motor.setPower(gamepad1.left_stick_y/1.5);
             //    rotator.setPosition((gamepad1.left_stick_x - 0.5) * 2);
 
-            pidtunedmotor1(wantedrpm);
+            run1Minute(wantedrpm);
+        }
+    }
+    /* some button here */
+    public void run1Minute(double rpm) {
+        long start = System.nanoTime();
+        if (gamepad1.a /* Replace with button.pressed or something */) {
+            while (System.nanoTime() - start < 60_000_000_000L) {
+                pidtunedmotor1(rpm);
+            }
         }
     }
 

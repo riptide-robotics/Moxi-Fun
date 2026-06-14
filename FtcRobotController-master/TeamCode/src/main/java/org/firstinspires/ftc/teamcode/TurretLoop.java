@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -32,6 +33,12 @@ public class TurretLoop extends LinearOpMode {
 
         double rps_to_rpm_coefficient = 60 / (2 * Math.PI * 1.4/*wheel radius*/);
 
+        // Map the button from the configuration
+        button = hardwareMap.get(DigitalChannel.class, "arcadeButton");
+
+        // Set the mode to INPUT so it reads data
+        button.setMode(DigitalChannel.Mode.INPUT);
+
         waitForStart();
         if (isStopRequested()) return;
 
@@ -45,13 +52,21 @@ public class TurretLoop extends LinearOpMode {
         }
     }
     /* some button here */
+    // Declare the digital channel
+    private DigitalChannel button;
     public void run1Minute(double rpm) {
+        // It returns 'false' when pressed, so we invert it with '!' for intuitive logic.
+        boolean isPressed = !button.getState();
         long start = System.nanoTime();
-        if (gamepad1.a /* Replace with button.pressed or something */) {
+        if (isPressed /* Replace with button.pressed or something */) {
             while (System.nanoTime() - start < 60_000_000_000L) {
                 pidtunedmotor1(rpm);
+                if (!opModeIsActive()) {
+                    break;
+                }
             }
         }
+        motor.setPower(0);
     }
 
 

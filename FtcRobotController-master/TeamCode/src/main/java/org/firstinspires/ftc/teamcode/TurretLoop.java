@@ -13,11 +13,18 @@ import java.util.List;
 @TeleOp(name = "Turret Loop")
 public class TurretLoop extends LinearOpMode {
 
+    private DigitalChannel button;
+
     public DcMotor motor;
     public Servo rotator;
 
+    public long timer;
+
     @Override
     public void runOpMode() {
+
+        button = hardwareMap.get(DigitalChannel.class, "arcadeButton");
+        button.setMode(DigitalChannel.Mode.INPUT);
 
         motor = hardwareMap.dcMotor.get("turret");
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -43,17 +50,21 @@ public class TurretLoop extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+            telemetry.update();
+
             double wheel_rpm = rps_to_rpm_coefficient * Math.sqrt((9.8 * Math.pow(distance, 2)) / (2 * Math.pow(Math.cos(angle), 2) * ((distance * Math.tan(angle)) - height)));
 
+            //dont remove the not
+            if (!button.getState()) timer = System.currentTimeMillis() + (10*1000);
             //    motor.setPower(gamepad1.left_stick_y/1.5);
             //    rotator.setPosition((gamepad1.left_stick_x - 0.5) * 2);
 
-            run1Minute(wantedrpm);
+            if (timer > System.currentTimeMillis()) pidtunedmotor1(wantedrpm);
+            else motor.setPower(0);
         }
     }
     /* some button here */
     // Declare the digital channel
-    private DigitalChannel button;
     public void run1Minute(double rpm) {
         // It returns 'false' when pressed, so we invert it with '!' for intuitive logic.
         boolean isPressed = !button.getState();

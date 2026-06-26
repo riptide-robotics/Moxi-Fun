@@ -16,7 +16,7 @@ public class TurretLoop extends LinearOpMode {
     private DigitalChannel button;
 
     public DcMotor motor;
-    public Servo rotator;
+    //public Servo rotator;
 
     public long timer;
 
@@ -30,9 +30,9 @@ public class TurretLoop extends LinearOpMode {
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        rotator = hardwareMap.servo.get("rotator");
-        rotator.setDirection(Servo.Direction.FORWARD);
-        rotator.setPosition(0);
+//        rotator = hardwareMap.servo.get("rotator");
+//        rotator.setDirection(Servo.Direction.FORWARD);
+//        rotator.setPosition(0);
 
         double distance = 5;
         double angle = 1;

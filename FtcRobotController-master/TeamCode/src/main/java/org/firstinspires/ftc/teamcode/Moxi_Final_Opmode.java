@@ -14,6 +14,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 
+// USE THIS OPMODE, NOT THE OTHER ONE
+// THIS IS THE FINAL MOXI OPMODE, HENCE THE NAME
+// idk what else to tell you
+
 @Config
 @TeleOp(name = "Moxi Final Opmode")
 public class Moxi_Final_Opmode extends LinearOpMode {

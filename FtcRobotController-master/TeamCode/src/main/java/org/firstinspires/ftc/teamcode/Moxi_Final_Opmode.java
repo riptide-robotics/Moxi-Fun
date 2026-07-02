@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import androidx.collection.ArraySet;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,12 +17,13 @@ import java.util.ArrayList;
 @Config
 @TeleOp(name = "Moxi Final Opmode")
 public class Moxi_Final_Opmode extends LinearOpMode {
-    public static int tunedRPM = 2000;
+    //public static int tunedRPM = 2550;
+    public static int tunedRPM = 2075;
     public static double kf = 0.000225;
     public static double queueSize = 25;
     public DcMotor motor;
     private DigitalChannel button;
-    public double cooldown = -100;
+    // public double cooldown = -100;
     double time = 0;
     double elapsed = 0;
     Telemetry tele;
@@ -52,13 +51,24 @@ public class Moxi_Final_Opmode extends LinearOpMode {
         while (opModeIsActive()) {
             // button pressed
             if(!button.getState()) {
-                elapsed = System.nanoTime() / 1e9;
+                elapsed = System.currentTimeMillis() / 1e3;
+                telemetry.addData("Button State", "PRESSED! 🔵");
+            } else {
+                telemetry.addData("Button State", "Not Pressed");
             }
 
             // turret times out after 20 seconds
-            if(System.nanoTime() / 1e9 - elapsed < 20) {
-                runMotor();
+            if(System.currentTimeMillis() / 1e3 - elapsed < 20.5) {
+                if (System.currentTimeMillis() / 1e3 - elapsed < 0.3) {
+                    motor.setPower(-0.075);
+                } else if (System.currentTimeMillis() / 1e3 - elapsed < 0.45) {
+                    motor.setPower(0);
+                } else {
+                    telemetry.addData("Timeout Time: ", System.currentTimeMillis() / 1e3 - elapsed);
+                    runMotor();
+                }
             } else {
+                telemetry.addLine("TIMED OUT");
                 motor.setPower(0);
             }
 
@@ -79,11 +89,11 @@ public class Moxi_Final_Opmode extends LinearOpMode {
         double currRPM = dTheta / (dt / 60);
 
         //stop calculations if rpm cant be actually calculated
-        if (currRPM <= 0 && cooldown < 0.25) {
-            cooldown += dt;
-            return;
-        }
-        if (currRPM > 0) cooldown = 0;
+//        if (currRPM <= 0 && cooldown < 0.25) {
+//            cooldown += dt;
+//            return;
+//        }
+//        if (currRPM > 0) cooldown = 0;
 
         records.add(currRPM);
         while (records.size() > queueSize) records.remove(0);

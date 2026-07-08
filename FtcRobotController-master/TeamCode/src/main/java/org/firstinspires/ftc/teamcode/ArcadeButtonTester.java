@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-@TeleOp(name = "Arcade Button Test", group = "Test")
+@TeleOp(name = "Button Test", group = "Test")
 public class ArcadeButtonTester extends LinearOpMode {
 
     // Declare the digital channel

@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -15,19 +14,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 
-// USE THIS OPMODE, NOT THE OTHER ONE
-// THIS IS THE FINAL MOXI OPMODE, HENCE THE NAME
-// idk what else to tell you
-
 @Config
-@TeleOp(name = "Moxi Final Opmode", group = "Run This")
-public class Moxi_Final_Opmode extends LinearOpMode {
-    //public static int tunedRPM = 2075;
-    public static int tunedRPM = 2100;
+@TeleOp(name = "Test Without Gate", group = "Test")
+public class Opmode_Without_Gate extends LinearOpMode {
+    //public static int tunedRPM = 2550;
+    public static int tunedRPM = 2075;
     public static double kf = 0.000225;
     public static double queueSize = 25;
     public DcMotor motor;
-    public Servo gate;
     private DigitalChannel button;
     // public double cooldown = -100;
     double time = 0;
@@ -35,8 +29,6 @@ public class Moxi_Final_Opmode extends LinearOpMode {
     Telemetry tele;
     double prevPos = 0;
     double currPos = 0;
-    double downPos = 0.995;
-    double upPos = 0.93;
     private PIDController rpmcontroller = new PIDController(0.0002, 0.000003, 0.00003556);
     private ArrayList<Double> records = new ArrayList<>();
 
@@ -49,10 +41,6 @@ public class Moxi_Final_Opmode extends LinearOpMode {
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         // motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        gate = hardwareMap.servo.get("rotator");
-        gate.setDirection(Servo.Direction.FORWARD);
-        gate.setPosition(downPos);
 
         button = hardwareMap.get(DigitalChannel.class, "arcadeButton");
         button.setMode(DigitalChannel.Mode.INPUT);
@@ -70,32 +58,17 @@ public class Moxi_Final_Opmode extends LinearOpMode {
             }
 
             // turret times out after 20 seconds
-            if(System.currentTimeMillis() / 1e3 - elapsed < 22) {
-                if (System.currentTimeMillis() / 1e3 - elapsed > 19) {
-                    gate.setPosition(downPos);
-                } else if (System.currentTimeMillis() / 1e3 - elapsed > 2) {
-                    gate.setPosition(upPos);
+            if(System.currentTimeMillis() / 1e3 - elapsed < 20.5) {
+                if (System.currentTimeMillis() / 1e3 - elapsed < 0.3) {
+                    motor.setPower(0.2);
+                } else if (System.currentTimeMillis() / 1e3 - elapsed < 0.575) {
+                    motor.setPower(-0.2);
+                } else if (System.currentTimeMillis() / 1e3 - elapsed < 0.6 ) {
+                    motor.setPower(0);
+                } else {
+                    telemetry.addData("Timeout Time: ", System.currentTimeMillis() / 1e3 - elapsed);
+                    runMotor();
                 }
-
-                telemetry.addData("Timeout Time: ", System.currentTimeMillis() / 1e3 - elapsed);
-                runMotor();
-//                if (System.currentTimeMillis() / 1e3 - elapsed < 0.3) {
-//                    motor.setPower(0.2);
-//                } else if (System.currentTimeMillis() / 1e3 - elapsed < 0.575) {
-//                    motor.setPower(-0.2);
-//                    gate.setPosition(upPos);
-//                } else if (System.currentTimeMillis() / 1e3 - elapsed < 0.6 ) {
-//                    motor.setPower(0);
-//                } else {
-//                    if (System.currentTimeMillis() / 1e3 - elapsed > 18) {
-//                        gate.setPosition(downPos);
-//                    } else if (System.currentTimeMillis() / 1e3 - elapsed > 1) {
-//                        gate.setPosition(upPos);
-//                    }
-//
-//                    telemetry.addData("Timeout Time: ", System.currentTimeMillis() / 1e3 - elapsed);
-//                    runMotor();
-//                }
             } else {
                 telemetry.addLine("TIMED OUT");
                 motor.setPower(0);

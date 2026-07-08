@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.ArrayList;
 
 @Config
-@TeleOp(name = "TurretPIDTuner")
+@TeleOp(name = "Turret PID Tuner", group = "Tuner")
 public class TurretPIDTuner extends LinearOpMode {
 
     public static double kp = 0.0002, ki = 0.000003, kd = 0.00003556;

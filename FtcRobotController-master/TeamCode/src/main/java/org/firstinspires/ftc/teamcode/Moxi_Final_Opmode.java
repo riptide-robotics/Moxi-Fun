@@ -22,8 +22,8 @@ import java.util.ArrayList;
 @Config
 @TeleOp(name = "Moxi Final Opmode", group = "Run This")
 public class Moxi_Final_Opmode extends LinearOpMode {
-    //public static int tunedRPM = 2250;
-    public static int tunedRPM = 2100;
+    //public static int tunedRPM = 2055; 2000; 1975
+    public static int tunedRPM = 2000;
     public static double kf = 0.000225;
     public static double queueSize = 25;
     public DcMotor motor;

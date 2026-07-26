@@ -76,7 +76,7 @@ public class Moxi_Final_Opmode extends LinearOpMode {
                 telemetry.addData("Button State", "Not Pressed");
             }
 
-            if (startTime != null) gateUp = ((System.currentTimeMillis() - startTime) / 7500f) < 0.3f;
+            if (startTime != null) gateUp = (((System.currentTimeMillis() - startTime) % 7500f)/7500) < 0.3f;
 
 
             // turret times out after 20 seconds

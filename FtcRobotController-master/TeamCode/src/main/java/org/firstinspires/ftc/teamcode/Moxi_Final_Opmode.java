@@ -40,6 +40,7 @@ public class Moxi_Final_Opmode extends LinearOpMode {
     private PIDController rpmcontroller = new PIDController(0.0002, 0.000003, 0.00003556);
     private ArrayList<Double> records = new ArrayList<>();
 
+    public long gateOpenDuration = 0;
     @Override
     public void runOpMode() {
 
@@ -60,21 +61,30 @@ public class Moxi_Final_Opmode extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
+        Long startTime = null;
+
         while (opModeIsActive()) {
+            Boolean gateUp = null;
+
             // button pressed
             if(!button.getState()) {
-                elapsed = System.currentTimeMillis() / 1e3;
+                elapsed = System.currentTimeMillis() / 1000f;
                 telemetry.addData("Button State", "PRESSED! 🔵");
+                startTime = System.currentTimeMillis();
+
             } else {
                 telemetry.addData("Button State", "Not Pressed");
             }
 
+            if (startTime != null) gateUp = ((System.currentTimeMillis() - startTime) / 7500f) < 0.3f;
+
+
             // turret times out after 20 seconds
-            if(System.currentTimeMillis() / 1e3 - elapsed < 22) {
-                if (System.currentTimeMillis() / 1e3 - elapsed > 19) {
-                    gate.setPosition(downPos);
-                } else if (System.currentTimeMillis() / 1e3 - elapsed > 2) {
-                    gate.setPosition(upPos);
+            if(System.currentTimeMillis() / 1000f - elapsed < 22) {
+                if (System.currentTimeMillis() / 1000f - elapsed > 19) {
+                    gateUp = false;
+                } else if (System.currentTimeMillis() / 1000f - elapsed > 2) {
+                    gateUp = true;
                 }
 
                 telemetry.addData("Timeout Time: ", System.currentTimeMillis() / 1e3 - elapsed);
@@ -102,6 +112,7 @@ public class Moxi_Final_Opmode extends LinearOpMode {
             }
 
             tele.update();
+            if (gateUp != null) gate.setPosition(gateUp ? upPos : downPos);
         }
     }
 

@@ -37,13 +37,19 @@ public class Moxi_Final_Opmode extends LinearOpMode {
     double currPos = 0;
     double downPos = 0.995;
     double upPos = 0.93;
+    public float timerDuration = 6000f;
+    public float activeTime = 0.25f;
+    public double averageRPM = 0;
     private PIDController rpmcontroller = new PIDController(0.0002, 0.000003, 0.00003556);
     private ArrayList<Double> records = new ArrayList<>();
 
     public long gateOpenDuration = 0;
+    public long startDelay = 0;
+
+    public boolean run = false;
+
     @Override
     public void runOpMode() {
-
         tele = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         motor = hardwareMap.dcMotor.get("turret");
@@ -64,26 +70,28 @@ public class Moxi_Final_Opmode extends LinearOpMode {
         Long startTime = null;
 
         while (opModeIsActive()) {
-            Boolean gateUp = null;
+            Boolean gateUp = false;
 
             // button pressed
             if(!button.getState()) {
                 elapsed = System.currentTimeMillis() / 1000f;
                 telemetry.addData("Button State", "PRESSED! 🔵");
-                startTime = System.currentTimeMillis();
-
+          //      if (startTime != null) startTime = null;
+                startTime =  3000 + (System.currentTimeMillis());
+                startDelay = 3000 + System.currentTimeMillis();
             } else {
                 telemetry.addData("Button State", "Not Pressed");
             }
+            if (startTime != null && startDelay < System.currentTimeMillis() && run)
+                gateUp = (((System.currentTimeMillis() - startTime) % timerDuration)/timerDuration) < activeTime;
 
-            if (startTime != null) gateUp = (((System.currentTimeMillis() - startTime) % 7500f)/7500) < 0.3f;
 
 
             // turret times out after 20 seconds
             if(System.currentTimeMillis() / 1000f - elapsed < 22) {
-                if (System.currentTimeMillis() / 1000f - elapsed > 19) {
+                if (System.currentTimeMillis() / 1000f - elapsed > 19 && run) {
                     gateUp = false;
-                } else if (System.currentTimeMillis() / 1000f - elapsed > 2) {
+                } else if (System.currentTimeMillis() / 1000f - elapsed > 2 && run) {
                     gateUp = true;
                 }
 
@@ -109,6 +117,7 @@ public class Moxi_Final_Opmode extends LinearOpMode {
             } else {
                 telemetry.addLine("TIMED OUT");
                 motor.setPower(0);
+                gateUp = false;
             }
 
             tele.update();
@@ -128,6 +137,8 @@ public class Moxi_Final_Opmode extends LinearOpMode {
 
         double currRPM = dTheta / (dt / 60);
 
+
+
         //stop calculations if rpm cant be actually calculated
 //        if (currRPM <= 0 && cooldown < 0.25) {
 //            cooldown += dt;
@@ -144,11 +155,11 @@ public class Moxi_Final_Opmode extends LinearOpMode {
             undividedAverage += records.get(i);
         }
 
-        double average = (records.size() == queueSize) ? undividedAverage / queueSize: currRPM;
-
-        tele.addData("average", average);
+        averageRPM = (records.size() == queueSize) ? undividedAverage / queueSize: currRPM;
+        run = currRPM <= averageRPM*1.1 && currRPM >= averageRPM*0.9;
+        tele.addData("average", averageRPM);
         tele.addData("CurrRPM", currRPM);
-        double wantedWheelPowerAverage = rpmcontroller.calculate(average, tunedRPM) + (tunedRPM * kf);
+        double wantedWheelPowerAverage = rpmcontroller.calculate(averageRPM, tunedRPM) + (tunedRPM * kf);
         if (wantedWheelPowerAverage == 0) wantedWheelPowerAverage = tunedRPM;
 
         tele.addData("AttemptedRPM", wantedWheelPowerAverage);

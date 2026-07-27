@@ -88,10 +88,10 @@ public class Moxi_Final_Opmode extends LinearOpMode {
 
 
             // turret times out after 20 seconds
-            if(System.currentTimeMillis() / 1000f - elapsed < 22) {
-                if (System.currentTimeMillis() / 1000f - elapsed > 19 && run) {
+            if(System.currentTimeMillis() / 1000f - elapsed < 22/3) {
+                if (System.currentTimeMillis() / 1000f - elapsed > 19/3 && run) {
                     gateUp = false;
-                } else if (System.currentTimeMillis() / 1000f - elapsed > 2 && run) {
+                } else if (System.currentTimeMillis() / 1000f - elapsed > 2/3 && run) {
                     gateUp = true;
                 }
 
